@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文章详情 - XIAOZHAO</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem("themeMode") === "dark" ? "dark" : "light";
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">B</span>
+        <div>
+          <strong>XIAOZHAO</strong>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="页面切换">
+        <button class="tab" type="button" data-index-view="public"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-home"></use></svg>主页</button>
+        <button class="tab" type="button" data-index-view="timeline"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-timeline"></use></svg>时间轴</button>
+        <button class="tab" type="button" data-index-view="more"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-more"></use></svg>更多</button>
+        <button class="tab" type="button" data-index-view="categories"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-category"></use></svg>分类</button>
+        <button class="tab" type="button" data-index-view="album"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-album"></use></svg>相册</button>
+        <button class="tab" type="button" data-index-view="moments"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-moment"></use></svg>说说</button>
+        <button class="tab" type="button" data-index-view="guestbook"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-message"></use></svg>留言</button>
+        <button class="tab" type="button" data-index-view="admin"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-login"></use></svg>登录</button>
+      </nav>
+      <button id="themeToggleBtn" class="theme-toggle" type="button" aria-label="切换到黑夜模式">
+        <svg class="theme-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-moon"></use></svg>
+        <span class="theme-label">夜间</span>
+      </button>
+    </header>
+
+    <main class="article-page">
+      <section class="bannerBox article-banner">
+        <div class="coverBox">
+          <div class="centerTile">文章</div>
+          <p id="articleHeroText">正在加载</p>
+        </div>
+      </section>
+
+      <div class="article-container">
+        <article class="post-detail" id="articleDetail">
+          <div class="empty-state">正在加载文章</div>
+        </article>
+      </div>
+    </main>
+
+    <div class="rightside-tools" aria-label="页面工具">
+      <button id="rightsideTopBtn" type="button" title="回到顶部" aria-label="回到顶部">↑</button>
+      <button id="rightsideBottomBtn" type="button" title="到底部" aria-label="到底部">↓</button>
+    </div>
+
+    <script src="./article.js"></script>
+  </body>
+</html>

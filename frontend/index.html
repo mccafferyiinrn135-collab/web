@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XIAOZHAO</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem("themeMode") === "dark" ? "dark" : "light";
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">B</span>
+        <div>
+          <strong>XIAOZHAO</strong>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="页面切换">
+        <button class="tab active" data-view="public"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-home"></use></svg>主页</button>
+        <button class="tab" data-view="timeline"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-timeline"></use></svg>时间轴</button>
+        <button class="tab" data-view="more"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-more"></use></svg>更多</button>
+        <button class="tab" data-view="categories"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-category"></use></svg>分类</button>
+        <button class="tab" data-view="album"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-album"></use></svg>相册</button>
+        <button class="tab" data-view="moments"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-moment"></use></svg>说说</button>
+        <button class="tab" data-view="guestbook"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-message"></use></svg>留言</button>
+        <button class="tab" data-view="admin"><svg class="menu-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-login"></use></svg>登录</button>
+      </nav>
+      <button id="themeToggleBtn" class="theme-toggle" type="button" aria-label="切换到黑夜模式">
+        <svg class="theme-icon" aria-hidden="true"><use href="./assets/menu-icons.svg#icon-moon"></use></svg>
+        <span class="theme-label">夜间</span>
+      </button>
+    </header>
+
+    <main class="app-shell">
+      <section id="publicView" class="view active">
+        <section class="bannerBox">
+          <div class="coverBox">
+            <div class="centerTile">小赵的博客</div>
+            <p id="publicSummary">正在加载文章</p>
+            <button id="scrollBottomBtn" class="heroIcon" type="button" aria-label="滚动到底部">﹀</button>
+          </div>
+        </section>
+
+        <div class="blog-container">
+          <div class="content-wrap">
+            <section class="content">
+              <div class="title">
+                <h3 id="contentTitle">文章专区</h3>
+                <div class="more" id="categoryLinks"></div>
+              </div>
+
+              <div class="toolbar">
+                <label class="search-box">
+                  <span>搜索</span>
+                  <input id="searchInput" type="search" placeholder="请输入关键字" />
+                </label>
+                <label>
+                  <span>分类</span>
+                  <select id="categoryFilter"></select>
+                </label>
+                <button id="refreshPostsBtn" class="secondary">刷新</button>
+              </div>
+
+              <section class="post-list" id="postList" aria-live="polite"></section>
+
+              <article class="post-detail hidden" id="postDetail">
+                <div class="empty-state">暂无选中文章</div>
+              </article>
+            </section>
+
+            <aside class="sidebar">
+              <section class="author-card">
+                <div class="author-cover"></div>
+                <button id="profileAvatarBtn" class="author-avatar-button" type="button" aria-label="打开个人设置">
+                  <img class="author-avatar" src="./assets/profile-cover.jpg" alt="avatar" />
+                </button>
+                <div id="authorSocials" class="author-socials" aria-label="联系方式"></div>
+                <h3 id="authorName">XIAOZHAO</h3>
+                <p id="authorBio">记录开发、设计和日常想法。</p>
+              </section>
+              <section class="widget widget_hot">
+                <h3>最新文章</h3>
+                <ul id="latestWidget"></ul>
+              </section>
+              <section class="widget widget_category">
+                <h3>文章分类</h3>
+                <ul id="categoryWidget"></ul>
+              </section>
+              <section class="widget widget_sentence">
+                <h3>标签云</h3>
+                <ul id="tagWidget"></ul>
+              </section>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="timelineView" class="view inner-page">
+        <div class="page-container">
+          <section class="page-card">
+            <div class="section-heading">
+              <span class="eyebrow">Timeline</span>
+              <h1>时间轴</h1>
+            </div>
+            <div id="timelineList" class="timeline-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="moreView" class="view inner-page">
+        <div class="page-container">
+          <section class="page-card">
+            <div class="section-heading">
+              <span class="eyebrow">More</span>
+              <h1>更多</h1>
+            </div>
+            <div class="shortcut-grid">
+              <button class="shortcut-card" type="button" data-shortcut-view="categories">
+                <strong>分类</strong>
+                <span>按主题浏览文章</span>
+              </button>
+              <button class="shortcut-card" type="button" data-shortcut-view="album">
+                <strong>相册</strong>
+                <span>查看站点图片</span>
+              </button>
+              <button class="shortcut-card" type="button" data-shortcut-view="moments">
+                <strong>说说</strong>
+                <span>记录零散想法</span>
+              </button>
+              <button class="shortcut-card" type="button" data-shortcut-view="profile">
+                <strong>个人设置</strong>
+                <span>修改当前浏览器资料</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="categoriesView" class="view inner-page">
+        <div class="page-container">
+          <section class="page-card">
+            <div class="section-heading">
+              <span class="eyebrow">Categories</span>
+              <h1>分类</h1>
+            </div>
+            <div id="categoryCards" class="category-grid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="albumView" class="view inner-page">
+        <div class="page-container">
+          <section class="page-card">
+            <div class="section-heading">
+              <span class="eyebrow">Album</span>
+              <h1>相册</h1>
+            </div>
+            <div class="album-grid">
+              <figure>
+                <img src="./assets/hero-bg.jpg" alt="博客首图" />
+                <figcaption>博客首图</figcaption>
+              </figure>
+              <figure>
+                <img src="./assets/profile-cover.jpg" alt="个人头像" />
+                <figcaption>个人头像</figcaption>
+              </figure>
+              <figure>
+                <img src="./assets/site-logo.png" alt="站点图标" />
+                <figcaption>站点图标</figcaption>
+              </figure>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="momentsView" class="view inner-page">
+        <div class="page-container">
+          <section class="page-card">
+            <div class="section-heading">
+              <span class="eyebrow">Moments</span>
+              <h1>说说</h1>
+            </div>
+            <div id="momentList" class="moment-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="guestbookView" class="view inner-page">
+        <div class="page-container">
+          <section class="page-card guestbook-card">
+            <div class="guestbook-stage">
+              <h1>留言</h1>
+              <div id="guestbookList" class="guestbook-list"></div>
+            </div>
+            <form id="guestbookForm" class="guestbook-compose">
+              <input name="content" maxlength="120" placeholder="写一句留言" required />
+              <button type="submit" aria-label="发送留言">
+                <svg class="send-icon" aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M3.5 11.5 20 4 16 20l-4.5-6-5.5 4z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
+                  <path d="m11.5 14 3-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                </svg>
+              </button>
+            </form>
+            <p id="guestbookMessage" class="form-message guestbook-message"></p>
+          </section>
+        </div>
+      </section>
+
+      <section id="profileView" class="view">
+        <section class="profile-panel">
+          <div class="profile-cover"></div>
+          <div class="profile-body">
+            <button id="profileBackBtn" class="secondary small" type="button">返回首页</button>
+            <img class="profile-avatar" src="./assets/profile-cover.jpg" alt="avatar" />
+            <div class="profile-heading">
+              <span class="eyebrow">Profile settings</span>
+              <h1>个人设置</h1>
+              <p>设置会保存在当前浏览器。</p>
+            </div>
+            <form id="profileForm" class="stack profile-form">
+              <label>
+                <span>昵称</span>
+                <input name="display_name" maxlength="40" required />
+              </label>
+              <label>
+                <span>个人简介</span>
+                <textarea name="bio" rows="3" maxlength="120"></textarea>
+              </label>
+              <div class="form-row">
+                <label>
+                  <span>邮箱</span>
+                  <input name="email" type="email" />
+                </label>
+                <label>
+                  <span>所在地</span>
+                  <input name="location" maxlength="60" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  <span>微信</span>
+                  <input name="wechat" maxlength="40" placeholder="填写微信号" />
+                </label>
+                <label>
+                  <span>QQ</span>
+                  <input name="qq" maxlength="20" placeholder="填写 QQ 号" />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  <span>微信图片</span>
+                  <input name="wechat_image" type="file" accept="image/*" />
+                </label>
+                <label>
+                  <span>QQ 图片</span>
+                  <input name="qq_image" type="file" accept="image/*" />
+                </label>
+              </div>
+              <button type="submit">保存设置</button>
+              <p id="profileMessage" class="form-message"></p>
+            </form>
+          </div>
+        </section>
+      </section>
+
+      <section id="adminView" class="view">
+        <section class="bannerBox admin-banner">
+          <div class="coverBox">
+            <div class="centerTile">管理</div>
+            <p>内容管理中心</p>
+          </div>
+        </section>
+
+        <div class="admin-container">
+          <section id="loginPanel" class="admin-panel narrow">
+            <h1>账号入口</h1>
+            <div class="auth-tabs" role="tablist" aria-label="账号入口">
+              <button id="showLoginTab" class="auth-tab active" type="button">登录</button>
+              <button id="showRegisterTab" class="auth-tab" type="button">注册</button>
+            </div>
+            <form id="loginForm" class="stack">
+              <label>
+                <span>用户名</span>
+                <input name="username" autocomplete="username" required />
+              </label>
+              <label>
+                <span>密码</span>
+                <input name="password" type="password" autocomplete="current-password" required />
+              </label>
+              <button type="submit">登录</button>
+              <p id="loginMessage" class="form-message"></p>
+            </form>
+            <form id="registerForm" class="stack hidden">
+              <label>
+                <span>用户名</span>
+                <input name="username" autocomplete="username" maxlength="150" required />
+              </label>
+              <label>
+                <span>邮箱</span>
+                <input name="email" type="email" autocomplete="email" required />
+              </label>
+              <label>
+                <span>密码</span>
+                <input name="password" type="password" autocomplete="new-password" minlength="8" required />
+              </label>
+              <label>
+                <span>确认密码</span>
+                <input name="password_confirm" type="password" autocomplete="new-password" minlength="8" required />
+              </label>
+              <button type="submit">注册并发送验证码</button>
+              <p id="registerMessage" class="form-message"></p>
+            </form>
+            <form id="verifyEmailForm" class="stack hidden">
+              <input name="username" type="hidden" />
+              <input name="email" type="hidden" />
+              <p class="verify-hint">验证码已发送到 <strong id="verifyEmailText"></strong></p>
+              <label>
+                <span>邮箱验证码</span>
+                <input name="code" inputmode="numeric" maxlength="6" minlength="6" autocomplete="one-time-code" required />
+              </label>
+              <button type="submit">验证并登录</button>
+              <button id="resendVerificationBtn" class="secondary" type="button">重新发送验证码</button>
+              <button id="backRegisterBtn" class="secondary" type="button">返回注册</button>
+              <p id="verifyEmailMessage" class="form-message"></p>
+            </form>
+          </section>
+
+          <section id="authorPanel" class="dashboard hidden">
+            <div class="admin-header page-head">
+              <div>
+                <span class="eyebrow">Author console</span>
+                <h1>创作中心</h1>
+                <p>发布文章并查看自己的作品</p>
+              </div>
+              <button id="authorLogoutBtn" class="secondary">退出</button>
+            </div>
+
+            <div class="admin-grid compact">
+              <section class="admin-panel editor-panel">
+                <div class="panel-heading">
+                  <h2>发布文章</h2>
+                  <button id="resetAuthorPostFormBtn" class="secondary small" type="button">清空</button>
+                </div>
+                <form id="authorPostForm" class="stack">
+                  <label>
+                    <span>标题</span>
+                    <input name="title" required maxlength="160" />
+                  </label>
+                  <label>
+                    <span>摘要</span>
+                    <textarea name="summary" rows="2" maxlength="300"></textarea>
+                  </label>
+                  <label>
+                    <span>正文</span>
+                    <textarea name="content" rows="10" required></textarea>
+                  </label>
+                  <label>
+                    <span>分类</span>
+                    <select name="category"></select>
+                  </label>
+                  <label>
+                    <span>封面图</span>
+                    <input name="cover_image" type="file" accept="image/*" />
+                  </label>
+                  <button type="submit">发布文章</button>
+                  <p id="authorPostFormMessage" class="form-message"></p>
+                </form>
+              </section>
+
+              <section class="admin-panel">
+                <div class="panel-heading">
+                  <h2>我的文章</h2>
+                  <button id="reloadAuthorPostsBtn" class="secondary small" type="button">刷新</button>
+                </div>
+                <div class="admin-list" id="authorPostList"></div>
+              </section>
+            </div>
+          </section>
+
+          <section id="dashboardPanel" class="dashboard hidden">
+            <div class="admin-header page-head">
+              <div>
+                <span class="eyebrow">Admin console</span>
+                <h1>内容管理</h1>
+                <p>管理文章、分类与评论审核</p>
+              </div>
+              <button id="logoutBtn" class="secondary">退出</button>
+            </div>
+
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <section class="admin-panel account-panel">
+              <div class="panel-heading">
+                <h2>账号管理</h2>
+                <button id="reloadAccountsBtn" class="secondary small" type="button">刷新</button>
+              </div>
+              <div class="admin-list" id="accountList"></div>
+            </section>
+
+            <div class="admin-grid admin-workbench">
+              <div class="admin-column">
+                <section class="admin-panel editor-panel">
+                  <div class="panel-heading">
+                    <h2 id="postFormTitle">新建文章</h2>
+                    <button id="resetPostFormBtn" class="secondary small" type="button">清空</button>
+                  </div>
+                  <form id="postForm" class="stack">
+                    <input type="hidden" name="slug" />
+                    <label>
+                      <span>标题</span>
+                      <input name="title" required maxlength="160" />
+                    </label>
+                    <label>
+                      <span>摘要</span>
+                      <textarea name="summary" rows="2" maxlength="300"></textarea>
+                    </label>
+                    <label>
+                      <span>正文</span>
+                      <textarea name="content" rows="10" required></textarea>
+                    </label>
+                    <div class="form-row">
+                      <label>
+                        <span>分类</span>
+                        <select name="category"></select>
+                      </label>
+                      <label>
+                        <span>状态</span>
+                        <select name="status">
+                          <option value="published">发布</option>
+                          <option value="draft">草稿</option>
+                        </select>
+                      </label>
+                    </div>
+                    <label class="inline-check">
+                      <input name="is_featured" type="checkbox" />
+                      <span>设为推荐</span>
+                    </label>
+                    <label>
+                      <span>封面图</span>
+                      <input name="cover_image" type="file" accept="image/*" />
+                    </label>
+                    <button type="submit">保存文章</button>
+                    <p id="postFormMessage" class="form-message"></p>
+                  </form>
+                </section>
+
+              </div>
+
+              <div class="admin-column">
+                <section class="admin-panel">
+                  <div class="panel-heading">
+                    <h2>文章列表</h2>
+                    <button id="reloadAdminPostsBtn" class="secondary small" type="button">刷新</button>
+                  </div>
+                  <div class="admin-list" id="adminPostList"></div>
+                </section>
+
+                <section class="admin-panel">
+                  <h2>分类管理</h2>
+                  <form id="categoryForm" class="inline-form">
+                    <input name="name" placeholder="分类名称" required maxlength="80" />
+                    <input name="description" placeholder="描述" />
+                    <button type="submit">新增</button>
+                  </form>
+                  <div class="admin-list" id="categoryList"></div>
+                </section>
+
+                <section class="admin-panel">
+                  <div class="panel-heading">
+                    <h2>评论审核</h2>
+                    <button id="reloadCommentsBtn" class="secondary small" type="button">刷新</button>
+                  </div>
+                  <div class="admin-list" id="commentList"></div>
+                </section>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div class="rightside-tools" aria-label="页面工具">
+      <button id="rightsideTopBtn" type="button" title="回到顶部" aria-label="回到顶部">↑</button>
+      <button id="rightsideBottomBtn" type="button" title="到底部" aria-label="到底部">↓</button>
+    </div>
+
+    <div id="albumLightbox" class="album-lightbox hidden" role="dialog" aria-modal="true" aria-label="相册图片预览">
+      <button id="albumLightboxClose" class="album-lightbox-close" type="button" aria-label="关闭预览">×</button>
+      <img id="albumLightboxImage" alt="" />
+      <p id="albumLightboxCaption"></p>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
