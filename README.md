@@ -1,4 +1,4 @@
-# XIAOZHAO Blog
+# Django Blog Template
 
 一个使用 Django + 独立静态前端开发的个人博客系统。项目采用前后端分离思路：后端只提供 JSON 数据接口和 Django Admin，前端使用原生 HTML / CSS / JavaScript 构建页面、交互、Markdown 文章编辑器和后台管理界面。
 
@@ -129,7 +129,7 @@ frontend/editor.html
 #include <stdio.h>
 
 int main(void) {
-    printf("Hello, XIAOZHAO!\n");
+    printf("Hello, Open Blog!\n");
     return 0;
 }
 ```
@@ -317,7 +317,7 @@ sudo apt install -y python3-venv python3-pip nginx
 ### 2. 安装 Python 依赖
 
 ```bash
-cd /opt/xiaozhao
+cd /opt/django-blog
 python3 -m venv .venv
 ./.venv/bin/pip install --upgrade pip
 ./.venv/bin/pip install -r requirements.txt
@@ -327,7 +327,7 @@ python3 -m venv .venv
 ### 3. 初始化 Django
 
 ```bash
-cd /opt/xiaozhao/backend
+cd /opt/django-blog/backend
 ../.venv/bin/python manage.py migrate
 ../.venv/bin/python manage.py collectstatic
 ../.venv/bin/python manage.py createsuperuser
@@ -337,17 +337,17 @@ cd /opt/xiaozhao/backend
 
 ```ini
 [Unit]
-Description=XIAOZHAO Django Blog
+Description=Django Blog Template
 After=network.target
 
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/opt/xiaozhao/backend
+WorkingDirectory=/opt/django-blog/backend
 Environment="DJANGO_SETTINGS_MODULE=config.settings"
 Environment="DJANGO_DEBUG=false"
 Environment="DJANGO_SECRET_KEY=replace-with-a-strong-secret"
-ExecStart=/opt/xiaozhao/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000
+ExecStart=/opt/django-blog/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000
 Restart=always
 
 [Install]
@@ -358,8 +358,8 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable xiaozhao
-sudo systemctl start xiaozhao
+sudo systemctl enable django-blog
+sudo systemctl start django-blog
 ```
 
 ### 5. Nginx 配置示例
@@ -369,7 +369,7 @@ server {
     listen 80;
     server_name example.com www.example.com;
 
-    root /opt/xiaozhao/frontend;
+    root /opt/django-blog/frontend;
     index index.html;
 
     location / {
@@ -393,11 +393,11 @@ server {
     }
 
     location /media/ {
-        alias /opt/xiaozhao/backend/media/;
+        alias /opt/django-blog/backend/media/;
     }
 
     location /static/ {
-        alias /opt/xiaozhao/backend/staticfiles/;
+        alias /opt/django-blog/backend/staticfiles/;
     }
 }
 ```
