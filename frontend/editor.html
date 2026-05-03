@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>新增文章 - XIAOZHAO</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem("themeMode") === "dark" ? "dark" : "light";
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="./styles.css?v=20260503-editor-admin" />
+  </head>
+  <body class="editor-body">
+    <main class="editor-page">
+      <section id="editorGate" class="editor-gate hidden">
+        <div>
+          <h1>需要登录</h1>
+          <p id="editorGateText">登录后可以发布和管理自己的文章。</p>
+        </div>
+        <button id="goLoginBtn" type="button">去登录</button>
+      </section>
+
+      <form id="editorForm" class="editor-workspace hidden">
+        <input type="hidden" name="slug" />
+
+        <header class="editor-page-title">
+          <h1 id="editorFormTitle">新增文章</h1>
+        </header>
+
+        <section class="editor-title-row" aria-label="文章标题">
+          <label class="editor-title-label" for="articleTitleInput"><span aria-hidden="true">*</span> 文章标题</label>
+          <input id="articleTitleInput" class="editor-title-input" name="title" required maxlength="160" placeholder="请输入文章标题" />
+          <button id="saveArticleBtn" class="editor-publish-btn" type="submit">
+            <span class="publish-icon" aria-hidden="true">▧</span>
+            <span data-save-label>发布文章</span>
+          </button>
+        </section>
+
+        <section class="editor-markdown-card">
+          <div class="format-toolbar" aria-label="Markdown 工具栏">
+            <div class="format-toolbar-group">
+              <button type="button" data-format="bold" title="加粗" aria-label="加粗"><strong>B</strong></button>
+              <button type="button" data-format="underline" title="下划线" aria-label="下划线"><span class="tool-underline">U</span></button>
+              <button type="button" data-format="italic" title="斜体" aria-label="斜体"><em>I</em></button>
+              <button type="button" data-format="strike" title="删除线" aria-label="删除线"><span class="tool-strike">S</span></button>
+            </div>
+            <span class="toolbar-divider" aria-hidden="true"></span>
+            <div class="format-toolbar-group">
+              <button type="button" data-format="heading" title="标题" aria-label="标题">H</button>
+              <button type="button" data-format="subscript" title="下标" aria-label="下标">A₂</button>
+              <button type="button" data-format="superscript" title="上标" aria-label="上标">A²</button>
+              <button type="button" data-format="quote" title="引用" aria-label="引用">❝</button>
+              <button type="button" data-format="unordered-list" title="无序列表" aria-label="无序列表">☷</button>
+              <button type="button" data-format="ordered-list" title="有序列表" aria-label="有序列表">⅓</button>
+              <button type="button" data-format="task-list" title="任务列表" aria-label="任务列表">☑</button>
+            </div>
+            <span class="toolbar-divider" aria-hidden="true"></span>
+            <div class="format-toolbar-group">
+              <button type="button" data-format="inline-code" title="行内代码" aria-label="行内代码">&lt;/&gt;</button>
+              <button type="button" data-format="code-block" title="代码块" aria-label="代码块">{ }</button>
+              <button type="button" data-format="link" title="链接" aria-label="链接">⌁</button>
+              <button type="button" data-format="image" title="图片" aria-label="图片">▧</button>
+              <button type="button" data-format="table" title="表格" aria-label="表格">▦</button>
+              <button type="button" data-format="diagram" title="流程图" aria-label="流程图">┴</button>
+              <button type="button" data-format="math" title="公式" aria-label="公式">∑</button>
+            </div>
+            <span class="toolbar-divider" aria-hidden="true"></span>
+            <div class="format-toolbar-group">
+              <button type="button" data-editor-action="undo" title="撤销" aria-label="撤销">↶</button>
+              <button type="button" data-editor-action="redo" title="重做" aria-label="重做">↷</button>
+              <button type="button" data-editor-action="save" title="保存" aria-label="保存">▣</button>
+            </div>
+            <div class="format-toolbar-spacer" aria-hidden="true"></div>
+            <div class="format-toolbar-group toolbar-view-tools">
+              <button id="refreshPreviewBtn" type="button" data-editor-action="refresh" title="刷新预览" aria-label="刷新预览">▤</button>
+              <button type="button" data-editor-mode="editor" title="只看编辑" aria-label="只看编辑">↙</button>
+              <button type="button" data-editor-action="fullscreen" title="全屏" aria-label="全屏">⛶</button>
+              <button class="active" type="button" data-editor-mode="split" title="分屏预览" aria-label="分屏预览">◉</button>
+              <button type="button" data-editor-mode="preview" title="只看预览" aria-label="只看预览">▭</button>
+              <button type="button" data-editor-action="view" title="查看文章" aria-label="查看文章">⌗</button>
+              <button type="button" data-editor-action="back" title="返回管理" aria-label="返回管理">☰</button>
+            </div>
+          </div>
+
+          <div id="editorMarkdownShell" class="editor-markdown-shell" data-mode="split">
+            <label class="editor-content-pane">
+              <span class="visually-hidden">正文</span>
+              <textarea id="editorContent" name="content" rows="24" required spellcheck="false" placeholder=""></textarea>
+            </label>
+            <article id="editorPreview" class="editor-preview-shell" aria-label="文章预览"></article>
+          </div>
+        </section>
+
+        <p id="editorMessage" class="form-message editor-message"></p>
+
+        <details class="editor-extra-settings">
+          <summary>发布设置</summary>
+          <div class="editor-settings-grid">
+            <label>
+              <span>摘要</span>
+              <textarea name="summary" rows="2" maxlength="300" placeholder="输入文章摘要"></textarea>
+            </label>
+            <label>
+              <span>类型</span>
+              <select name="category"></select>
+            </label>
+            <label>
+              <span>标签</span>
+              <select name="tags" multiple size="5"></select>
+            </label>
+            <label>
+              <span>可见范围</span>
+              <select name="status">
+                <option value="published">所有人可见</option>
+                <option value="draft">仅个人可见</option>
+              </select>
+            </label>
+            <div id="staffFields" class="editor-checks hidden">
+              <label class="inline-check">
+                <input name="is_featured" type="checkbox" />
+                <span>设为推荐</span>
+              </label>
+              <label class="inline-check">
+                <input name="is_pinned" type="checkbox" />
+                <span>置顶文章</span>
+              </label>
+            </div>
+            <label>
+              <span>封面图</span>
+              <input name="cover_image" type="file" accept="image/*" />
+            </label>
+            <div class="editor-cover-actions">
+              <button id="removeCoverBtn" class="secondary small" type="button" disabled>取消封面</button>
+              <img id="coverPreview" class="editor-cover-preview hidden" src="" alt="" />
+            </div>
+            <label>
+              <span>文章附件</span>
+              <input name="attachments" type="file" multiple />
+            </label>
+            <div id="selectedAttachments" class="attachment-preview-list"></div>
+            <div id="existingAttachments" class="attachment-preview-list"></div>
+          </div>
+        </details>
+
+        <div class="editor-secondary-actions">
+          <button id="backManageBtn" class="secondary small" type="button">返回管理</button>
+          <button id="viewArticleBtn" class="secondary small" type="button" disabled>查看文章</button>
+        </div>
+      </form>
+    </main>
+
+    <script src="./editor.js?v=20260503-editor-admin"></script>
+  </body>
+</html>
